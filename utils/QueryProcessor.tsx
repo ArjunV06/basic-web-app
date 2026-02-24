@@ -27,6 +27,11 @@ export default function QueryProcessor(query: string): string {
     return String(Math.max(...numbers));
   }
 
+  const subtractionMatch = query.match(/What is (\d+) minus (\d+)/i);
+  if (subtractionMatch) {
+    return String(Number(subtractionMatch[1]) - Number(subtractionMatch[2]));
+  }
+
   const multiplyMatch = query.match(/What is (\d+) multiplied by (\d+)/i);
   if (multiplyMatch) {
     return String(Number(multiplyMatch[1]) * Number(multiplyMatch[2]));
