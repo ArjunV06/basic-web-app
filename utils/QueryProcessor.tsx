@@ -37,6 +37,19 @@ export default function QueryProcessor(query: string): string {
     return String(Number(multiplyMatch[1]) * Number(multiplyMatch[2]));
   }
 
+  const primesMatch = query.match(/Which of the following numbers are primes[:\s]+([\d,\s]+)\??/i);
+  if (primesMatch) {
+    const numbers = primesMatch[1].split(",").map((n) => Number(n.trim()));
+    const isPrime = (n: number) => {
+      if (n < 2) return false;
+      for (let i = 2; i <= Math.sqrt(n); i++) {
+        if (n % i === 0) return false;
+      }
+      return true;
+    };
+    return numbers.filter(isPrime).join(", ");
+  }
+
   const squareAndCubeMatch = query.match(/Which of the following numbers is both a square and a cube[:\s]+([\d,\s]+)\??/i);
   if (squareAndCubeMatch) {
     const numbers = squareAndCubeMatch[1].split(",").map((n) => Number(n.trim()));
