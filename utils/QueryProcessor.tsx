@@ -15,27 +15,62 @@ export default function QueryProcessor(query: string): string {
     return "arjunvas";
   }
   
-  const additionMatch = query.match(/What is ([\d\s plus]+)\??$/i);
-  if (additionMatch && additionMatch[1].toLowerCase().includes("plus")) {
-    const numbers = additionMatch[1].toLowerCase().split("plus").map((n) => Number(n.trim()));
-    return String(numbers.reduce((a, b) => a + b, 0));
+  const arithmeticMatch = query.match(/What is (.+?)\??$/i);
+  if (arithmeticMatch) {
+    const tokens = arithmeticMatch[1].trim().split(/\s+/);
+    const nums: number[] = [];
+    const ops: string[] = [];
+    let i = 0;
+    while (i < tokens.length) {
+      if (!isNaN(Number(tokens[i])) && tokens[i] !== "") {
+        nums.push(Number(tokens[i++]));
+      } else if (tokens[i] === "plus") {
+        ops.push("+"); i++;
+      } else if (tokens[i] === "minus") {
+        ops.push("-"); i++;
+      } else if (tokens[i] === "multiplied" && tokens[i + 1] === "by") {
+        ops.push("*"); i += 2;
+      } else if (tokens[i] === "to" && tokens[i + 1] === "the" && tokens[i + 2] === "power" && tokens[i + 3] === "of") {
+        ops.push("**"); i += 4;
+      } else {
+        i++;
+      }
+    }
+    if (nums.length > 0 && nums.length === ops.length + 1) {
+      // first pass: exponentiation
+      let j = 0;
+      while (j < ops.length) {
+        if (ops[j] === "**") {
+          nums.splice(j, 2, Math.pow(nums[j], nums[j + 1]));
+          ops.splice(j, 1);
+        } else {
+          j++;
+        }
+      }
+      // second pass: multiplication
+      j = 0;
+      while (j < ops.length) {
+        if (ops[j] === "*") {
+          nums.splice(j, 2, nums[j] * nums[j + 1]);
+          ops.splice(j, 1);
+        } else {
+          j++;
+        }
+      }
+      // second pass: addition and subtraction
+      let result = nums[0];
+      for (let k = 0; k < ops.length; k++) {
+        if (ops[k] === "+") result += nums[k + 1];
+        else if (ops[k] === "-") result -= nums[k + 1];
+      }
+      return String(result);
+    }
   }
 
-  //test
   const largestMatch = query.match(/Which of the following numbers is the largest[:\s]+([\d,\s]+)\??/i);
   if (largestMatch) {
     const numbers = largestMatch[1].split(",").map((n) => Number(n.trim()));
     return String(Math.max(...numbers));
-  }
-
-  const subtractionMatch = query.match(/What is (\d+) minus (\d+)/i);
-  if (subtractionMatch) {
-    return String(Number(subtractionMatch[1]) - Number(subtractionMatch[2]));
-  }
-
-  const multiplyMatch = query.match(/What is (\d+) multiplied by (\d+)/i);
-  if (multiplyMatch) {
-    return String(Number(multiplyMatch[1]) * Number(multiplyMatch[2]));
   }
 
   const primesMatch = query.match(/Which of the following numbers are primes[:\s]+([\d,\s]+)\??/i);
