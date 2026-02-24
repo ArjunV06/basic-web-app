@@ -20,6 +20,7 @@ export default function QueryProcessor(query: string): string {
     return String(Number(additionMatch[1]) + Number(additionMatch[2]));
   }
 
+  //test
   const largestMatch = query.match(/Which of the following numbers is the largest[:\s]+([\d,\s]+)\??/i);
   if (largestMatch) {
     const numbers = largestMatch[1].split(",").map((n) => Number(n.trim()));
