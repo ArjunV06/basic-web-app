@@ -26,5 +26,20 @@ export default function QueryProcessor(query: string): string {
     return String(Math.max(...numbers));
   }
 
+  const multiplyMatch = query.match(/What is (\d+) multiplied by (\d+)/i);
+  if (multiplyMatch) {
+    return String(Number(multiplyMatch[1]) * Number(multiplyMatch[2]));
+  }
+
+  const squareAndCubeMatch = query.match(/Which of the following numbers is both a square and a cube[:\s]+([\d,\s]+)\??/i);
+  if (squareAndCubeMatch) {
+    const numbers = squareAndCubeMatch[1].split(",").map((n) => Number(n.trim()));
+    const results = numbers.filter((n) => {
+      const sixth = Math.round(Math.pow(n, 1 / 6));
+      return Math.pow(sixth, 6) === n;
+    });
+    return results.join(", ");
+  }
+
   return "";
 }
