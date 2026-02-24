@@ -37,11 +37,12 @@ export default function QueryProcessor(query: string): string {
       }
     }
     if (nums.length > 0 && nums.length === ops.length + 1) {
+      const bigs = nums.map((n) => BigInt(n));
       // first pass: exponentiation
       let j = 0;
       while (j < ops.length) {
         if (ops[j] === "**") {
-          nums.splice(j, 2, Math.pow(nums[j], nums[j + 1]));
+          bigs.splice(j, 2, bigs[j] ** bigs[j + 1]);
           ops.splice(j, 1);
         } else {
           j++;
@@ -51,17 +52,17 @@ export default function QueryProcessor(query: string): string {
       j = 0;
       while (j < ops.length) {
         if (ops[j] === "*") {
-          nums.splice(j, 2, nums[j] * nums[j + 1]);
+          bigs.splice(j, 2, bigs[j] * bigs[j + 1]);
           ops.splice(j, 1);
         } else {
           j++;
         }
       }
-      // second pass: addition and subtraction
-      let result = nums[0];
+      // third pass: addition and subtraction
+      let result = bigs[0];
       for (let k = 0; k < ops.length; k++) {
-        if (ops[k] === "+") result += nums[k + 1];
-        else if (ops[k] === "-") result -= nums[k + 1];
+        if (ops[k] === "+") result += bigs[k + 1];
+        else if (ops[k] === "-") result -= bigs[k + 1];
       }
       return String(result);
     }
