@@ -15,12 +15,12 @@ export default function QueryProcessor(query: string): string {
     return "arjunvas";
   }
   
-  const additionMatch = query.match(/what is (\d+) plus (\d+)/i);
+  const additionMatch = query.match(/What is (\d+) plus (\d+)/i);
   if (additionMatch) {
     return String(Number(additionMatch[1]) + Number(additionMatch[2]));
   }
 
-  const largestMatch = query.match(/which of the following numbers is the largest[:\s]+([\d,\s]+)\??/i);
+  const largestMatch = query.match(/Which of the following numbers is the largest[:\s]+([\d,\s]+)\??/i);
   if (largestMatch) {
     const numbers = largestMatch[1].split(",").map((n) => Number(n.trim()));
     return String(Math.max(...numbers));
