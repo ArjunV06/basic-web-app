@@ -15,9 +15,10 @@ export default function QueryProcessor(query: string): string {
     return "arjunvas";
   }
   
-  const additionMatch = query.match(/What is (\d+) plus (\d+)/i);
-  if (additionMatch) {
-    return String(Number(additionMatch[1]) + Number(additionMatch[2]));
+  const additionMatch = query.match(/What is ([\d\s plus]+)\??$/i);
+  if (additionMatch && additionMatch[1].toLowerCase().includes("plus")) {
+    const numbers = additionMatch[1].toLowerCase().split("plus").map((n) => Number(n.trim()));
+    return String(numbers.reduce((a, b) => a + b, 0));
   }
 
   //test
